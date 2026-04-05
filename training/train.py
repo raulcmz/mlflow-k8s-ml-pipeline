@@ -5,6 +5,20 @@ from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
+import mlflow
+import mlflow.sklearn
+
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_auc_score,
+)
+
 
 NUMERIC_FEATURES = [
     "tenure",
@@ -77,6 +91,60 @@ def build_preprocessor() -> ColumnTransformer:
     )
     return preprocessor
 
+def get_models():
+    return {
+        "logistic_regression": LogisticRegression(max_iter=1000),
+        "random_forest": RandomForestClassifier(n_estimators=100, random_state=42),
+    }
+
+
+def evaluate_model(y_true, y_pred, y_proba):
+    return {
+        "accuracy": accuracy_score(y_true, y_pred),
+        "precision": precision_score(y_true, y_pred),
+        "recall": recall_score(y_true, y_pred),
+        "f1": f1_score(y_true, y_pred),
+        "roc_auc": roc_auc_score(y_true, y_proba),
+    }
+
+
+def train_and_log_model(
+    model_name,
+    model,
+    preprocessor,
+    X_train,
+    X_test,
+    y_train,
+    y_test,
+):
+    with mlflow.start_run(run_name=model_name):
+
+        pipeline = Pipeline([
+            ("preprocessor", preprocessor),
+            ("model", model),
+        ])
+
+        # Train
+        pipeline.fit(X_train, y_train)
+
+        # Predict
+        y_pred = pipeline.predict(X_test)
+        y_proba = pipeline.predict_proba(X_test)[:, 1]
+
+        # Metrics
+        metrics = evaluate_model(y_test, y_pred, y_proba)
+
+        # Log metrics
+        for key, value in metrics.items():
+            mlflow.log_metric(key, value)
+
+        # Log model
+        mlflow.sklearn.log_model(pipeline, "model")
+
+        print(f"\nModel: {model_name}")
+        for k, v in metrics.items():
+            print(f"{k}: {v:.4f}")
+
 
 def main() -> None:
     data_path = Path("data/raw/Telco-Customer-Churn.csv")
@@ -111,6 +179,23 @@ def main() -> None:
     print("X_test :", X_test.shape)
     print("y_train:", y_train.shape)
     print("y_test :", y_test.shape)
+
+    print("\nStarting training...")
+
+    models = get_models()
+
+    mlflow.set_experiment("telco-churn")
+
+    for model_name, model in models.items():
+        train_and_log_model(
+            model_name,
+            model,
+            preprocessor,
+            X_train,
+            X_test,
+            y_train,
+            y_test,
+        )
 
 
 if __name__ == "__main__":
