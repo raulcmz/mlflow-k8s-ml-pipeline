@@ -8,7 +8,7 @@ from serving.schemas import PredictionRequest
 app = FastAPI()
 
 # 👉 IMPORTANTE: pon aquí la ruta correcta del modelo
-MODEL_URI = "runs:/d73cdf49384e4bc8b3faccba9370e4d2/model"
+MODEL_URI = "/home/raul/mlflow-k8s-ml-pipeline/mlruns/1/models/m-89cd323af97d43f9aba93bb1fc4feaa6/artifacts"
 
 model = None
 
