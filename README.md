@@ -45,4 +45,5 @@ mlflow-k8s-ml-pipeline/
 
 ## Architecture
 
-![Architecture](docs/architecture.svg)
+- [Architecture](docs/architecture.svg)
+- [Operations Guide](docs/operations.md)
