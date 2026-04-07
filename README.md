@@ -19,7 +19,7 @@ The initial use case is **customer churn prediction** using the Telco Customer C
 
 ## Architecture
 
-![Architecture](docs/architecture.png)
+![Architecture](docs/architecture.svg)
 
 Additional details:
 - [Architecture Notes](docs/architecture.md)
@@ -154,8 +154,8 @@ kubectl apply -f k8s/api-ingress.yaml
 
 ## Documentation
 
-Architecture
-Operations Guide
+- [Architecture Notes](docs/architecture.md)
+- [Operations Guide](docs/operations.md)
 
 ## Project Status
 
