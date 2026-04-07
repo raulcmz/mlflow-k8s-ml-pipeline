@@ -1,0 +1,56 @@
+artifactRoot:
+  s3:
+    awsAccessKeyId: TNgtmKmwPpo6Uod59Eem
+    awsSecretAccessKey: qiOSsxmG8yuNSvuYUdDMa1Jwigh6CiwL3k6lSI6A
+    bucket: mlflow-artifacts
+    enabled: true
+
+auth:
+  enabled: false
+
+backendStore:
+  databaseMigration: true
+  postgres:
+    database: mlflow
+    driver: psycopg2
+    enabled: true
+    host: mlops-postgresql.mlops.svc.cluster.local
+    password: mlops_pass
+    port: 5432
+    user: postgres
+
+extraEnvVars:
+  MLFLOW_S3_ENDPOINT_URL: http://mlops-minio.mlops.svc.cluster.local:9000
+  AWS_S3_FORCE_PATH_STYLE: "true"
+
+image:
+  pullPolicy: IfNotPresent
+  repository: burakince/mlflow
+  tag: 3.7.0
+
+livenessProbe:
+  failureThreshold: 6
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  timeoutSeconds: 5
+
+readinessProbe:
+  failureThreshold: 6
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  timeoutSeconds: 5
+
+replicaCount: 1
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 300m
+    memory: 512Mi
+
+service:
+  containerPort: 5000
+  port: 5000
+  type: ClusterIP

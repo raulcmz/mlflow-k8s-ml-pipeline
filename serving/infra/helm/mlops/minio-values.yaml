@@ -1,0 +1,23 @@
+accessKey: minioaccess
+secretKey: miniosecret
+
+mode: standalone
+replicas: 1
+
+persistence:
+  enabled: true
+  size: 2Gi
+  storageClass: local-path
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+console:
+  enabled: true
+  service:
+    type: ClusterIP
