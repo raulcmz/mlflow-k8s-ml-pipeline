@@ -52,6 +52,23 @@ def validate_raw_data(df: pd.DataFrame) -> None:
         gx.expectations.ExpectColumnValuesToNotBeNull(column="MonthlyCharges"),
         gx.expectations.ExpectColumnValuesToBeBetween(column="tenure", min_value=0),
         gx.expectations.ExpectColumnValuesToBeBetween(column="MonthlyCharges", min_value=0),
+        gx.expectations.ExpectColumnValuesToBeInSet(
+            column="InternetService",
+            value_set=["DSL", "Fiber optic", "No"],
+        ),
+        gx.expectations.ExpectColumnValuesToBeInSet(
+            column="Contract",
+            value_set=["Month-to-month", "One year", "Two year"],
+        ),
+        gx.expectations.ExpectColumnValuesToBeInSet(
+            column="PaymentMethod",
+            value_set=[
+                "Electronic check",
+                "Mailed check",
+                "Bank transfer (automatic)",
+                "Credit card (automatic)",
+            ],
+        ),
     ]
 
     failed_expectations = []
