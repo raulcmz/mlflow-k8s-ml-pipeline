@@ -101,6 +101,18 @@ The FastAPI service:
 
 ## Quick Start
 
+### Convenience Commands
+
+A minimal `Makefile` is included for common development tasks:
+
+```bash
+make help
+make train
+make serve-local
+make docker-build-serving
+make deploy-serving
+```
+
 ### Training
 
 ```bash
