@@ -1,4 +1,5 @@
 from mlflow import MlflowClient
+from training.validate import validate_raw_data
 from pathlib import Path
 
 import pandas as pd
@@ -188,6 +189,8 @@ def main() -> None:
 
     df = load_data(data_path)
     print("Raw shape:", df.shape)
+
+    validate_raw_data(df)
 
     df_clean = clean_data(df)
     print("Cleaned shape:", df_clean.shape)

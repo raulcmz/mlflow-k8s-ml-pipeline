@@ -21,7 +21,7 @@ train:
 	AWS_ACCESS_KEY_ID=$$AWS_ACCESS_KEY_ID \
 	AWS_SECRET_ACCESS_KEY=$$AWS_SECRET_ACCESS_KEY \
 	AWS_S3_FORCE_PATH_STYLE=true \
-	python training/train.py
+	python -m training.train
 
 serve-local:
 	MODEL_URI=$(MODEL_URI) \
