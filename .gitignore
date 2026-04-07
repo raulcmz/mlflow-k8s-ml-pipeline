@@ -7,3 +7,4 @@ mlflow.db
 *.env
 data/raw/
 .DS_Store
+reports/

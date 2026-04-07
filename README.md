@@ -179,7 +179,7 @@ Current stage:
 - ✅ FastAPI serving on Kubernetes
 - ✅ Ingress-based access to MLflow and serving
 - ✅  Data validation with Great Expectations
-- 🔜 Drift monitoring with Evidently
+- ✅  Drift monitoring with Evidently
 - 🔜 CI/CD and image versioning
 - 🔜 Feature store integration with Feast
 

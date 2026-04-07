@@ -1,4 +1,4 @@
-.PHONY: help train serve-local docker-build-serving docker-run-serving deploy-serving restart-serving logs-serving
+.PHONY: help train serve-local docker-build-serving docker-run-serving deploy-serving restart-serving logs-serving drift-report
 
 IMAGE_NAME=rcabe005/mlflow-serving:latest
 MODEL_URI=models:/telco-churn-model@champion
@@ -14,6 +14,7 @@ help:
 	@echo "  make deploy-serving        - Deploy serving resources to Kubernetes"
 	@echo "  make restart-serving       - Restart serving deployment in Kubernetes"
 	@echo "  make logs-serving          - Show logs from serving deployment"
+	@echo "  make drift-report          - Generates a html report"
 
 train:
 	MLFLOW_TRACKING_URI=$(MLFLOW_TRACKING_URI) \
@@ -59,3 +60,6 @@ restart-serving:
 
 logs-serving:
 	kubectl logs -n ml-serving deploy/mlflow-serving --tail=100 -f
+
+drift-report:
+	python -m training.drift
