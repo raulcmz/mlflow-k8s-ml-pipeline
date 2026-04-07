@@ -1,3 +1,4 @@
+from mlflow import MlflowClient
 from pathlib import Path
 
 import pandas as pd
@@ -45,6 +46,7 @@ CATEGORICAL_FEATURES = [
     "PaymentMethod",
 ]
 
+REGISTERED_MODEL_NAME = "telco-churn-model"
 
 def load_data(path: str) -> pd.DataFrame:
     """
@@ -117,7 +119,7 @@ def train_and_log_model(
     y_train,
     y_test,
 ):
-    with mlflow.start_run(run_name=model_name):
+    with mlflow.start_run(run_name=model_name) as run:
 
         pipeline = Pipeline([
             ("preprocessor", preprocessor),
@@ -134,16 +136,51 @@ def train_and_log_model(
         # Metrics
         metrics = evaluate_model(y_test, y_pred, y_proba)
 
+        # Log params
+        mlflow.log_param("model_name", model_name)
+
         # Log metrics
         for key, value in metrics.items():
             mlflow.log_metric(key, value)
 
         # Log model
-        mlflow.sklearn.log_model(pipeline, "model")
+        model_info = mlflow.sklearn.log_model(pipeline, name="model")
 
         print(f"\nModel: {model_name}")
         for k, v in metrics.items():
             print(f"{k}: {v:.4f}")
+
+        return {
+            "model_name": model_name,
+            "run_id": run.info.run_id,
+            "metrics": metrics,
+            "model_uri": model_info.model_uri,
+        }
+    
+def register_best_model(best_result: dict):
+    """
+    Register the best model in MLflow Model Registry and assign the 'champion' alias.
+    """
+    client = MlflowClient()
+
+    print(f"\nRegistering best model: {best_result['model_name']}")
+    print(f"Source model URI: {best_result['model_uri']}")
+
+    registered_model = mlflow.register_model(
+        model_uri=best_result["model_uri"],
+        name=REGISTERED_MODEL_NAME,
+    )
+
+    client.set_registered_model_alias(
+        name=REGISTERED_MODEL_NAME,
+        alias="champion",
+        version=registered_model.version,
+    )
+
+    print(
+        f"Registered model '{REGISTERED_MODEL_NAME}' "
+        f"version {registered_model.version} with alias 'champion'"
+    )
 
 
 def main() -> None:
@@ -186,8 +223,10 @@ def main() -> None:
 
     mlflow.set_experiment("telco-churn")
 
+    results = []
+
     for model_name, model in models.items():
-        train_and_log_model(
+        result = train_and_log_model(
             model_name,
             model,
             preprocessor,
@@ -196,7 +235,15 @@ def main() -> None:
             y_train,
             y_test,
         )
+        results.append(result)
 
+    best_result = max(results, key=lambda r: r["metrics"]["f1"])
+
+    print("\nBest model selected:")
+    print(f"Model: {best_result['model_name']}")
+    print(f"F1 score: {best_result['metrics']['f1']:.4f}")
+
+    register_best_model(best_result)
 
 if __name__ == "__main__":
     main()
