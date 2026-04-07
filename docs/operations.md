@@ -166,5 +166,7 @@ Check that:
 
 Ensure MLflow is configured with:
 
+```bash
 MLFLOW_SERVER_ALLOWED_HOSTS
 MLFLOW_SERVER_CORS_ALLOWED_ORIGINS
+```
