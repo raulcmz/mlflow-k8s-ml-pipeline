@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
+import mlflow
 from evidently import Dataset, DataDefinition, Report
 from evidently.presets import DataDriftPreset
 
@@ -76,6 +77,12 @@ def generate_drift_report(reference_df: pd.DataFrame, current_df: pd.DataFrame) 
 
     output_path = REPORTS_DIR / "data_drift_report.html"
     evaluation.save_html(str(output_path))
+
+    mlflow.set_experiment("telco-churn")
+
+    # log en MLflow
+    with mlflow.start_run(run_name="drift_report"):
+        mlflow.log_artifact(str(output_path), artifact_path="drift_reports")
 
     return output_path
 
