@@ -99,6 +99,30 @@ The FastAPI service:
 - exposes `/predict`
 - runs locally, in Docker, and on Kubernetes
 
+## Drift Detection
+
+You can generate a data drift report comparing a reference dataset with a current dataset using Evidently.
+
+```bash
+make drift-report
+```
+
+This will:
+
+* generate a drift report (`data_drift_report.html`)
+* generate a data summary report (`data_summary_report.html`)
+* log both reports as MLflow artifacts
+* log drift metrics (`drift_share`, `drifted_columns`, etc.)
+
+Reports are stored locally in:
+
+```
+reports/evidently/
+```
+
+and are also available in MLflow under the `drift_report` run.
+
+
 ## Quick Start
 
 ### Convenience Commands
@@ -111,6 +135,7 @@ make train
 make serve-local
 make docker-build-serving
 make deploy-serving
+make drift-report
 ```
 
 ### Training

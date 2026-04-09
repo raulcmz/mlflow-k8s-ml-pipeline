@@ -62,4 +62,9 @@ logs-serving:
 	kubectl logs -n ml-serving deploy/mlflow-serving --tail=100 -f
 
 drift-report:
+	MLFLOW_TRACKING_URI=$(MLFLOW_TRACKING_URI) \
+	MLFLOW_S3_ENDPOINT_URL=$(MLFLOW_S3_ENDPOINT_URL) \
+	AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+	AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+	AWS_S3_FORCE_PATH_STYLE=true \
 	python -m training.drift
